@@ -4,7 +4,11 @@ A SwiftUI shimmer placeholder library where **all bars sweep in perfect sync** â
 
 Unlike per-element shimmer libraries that animate each view independently (causing mismatched diagonal sweeps), SyncShimmer uses a global timestamp and screen-position awareness so every placeholder lights up at the same screen X at the same instant.
 
-![SyncShimmer Demo](demo.gif)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="demo-dark.gif">
+  <source media="(prefers-color-scheme: light)" srcset="demo.gif">
+  <img alt="SyncShimmer Demo" src="demo.gif">
+</picture>
 
 ## Features
 
