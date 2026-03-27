@@ -135,12 +135,87 @@ SyncShimmerConfig.highlightColor = Color.white.opacity(0.3)
 
 ## How It Works
 
+Instead of each bar animating its own gradient independently,
+SyncShimmer uses ONE global timestamp. Every bar reads the same
+time and computes where the highlight beam is on screen. The
+result: a single "flashlight beam" that sweeps across and every
+bar lights up as it passes through.
+
 1. `TimelineView(.animation)` provides a continuous global timestamp
 2. Each bar uses `GeometryReader` to find its screen position via `.frame(in: .global)`
 3. A virtual "beam" position is computed from `(timestamp % duration) / duration` → 0...1 phase
 4. The beam sweeps across the zone width; each bar maps it to local coordinates
 5. A soft `LinearGradient` is positioned at the local beam position
 6. Result: one beam, many bars, perfectly in sync
+
+### Single Zone (`.full`)
+
+```
+t=0.0s
+┌──────────────────────────────────────┐
+│ ▓▓░░░░░░░░░░░░░░░░                  │
+│ ▓▓░░░░░░░░░░░░░░░░░░░░░░░           │
+│ ▓▓░░░░░░░░░░░░░░░░░                 │
+│ ▓▓░░░░░░░░░░░░░  ▓▓░░░░░░░░░░░░░   │
+│ ▓▓░░░░░░░░░░░░░░░░░░  ▓▓░░░░░       │
+└──────────────────────────────────────┘
+ ▲ beam starts at left edge
+
+t=0.8s
+┌──────────────────────────────────────┐
+│ ░░░░░░░░░▓▓░░░░░░░                  │
+│ ░░░░░░░░░▓▓░░░░░░░░░░░░░            │
+│ ░░░░░░░░░▓▓░░░░░░░░                 │
+│ ░░░░░░░░░▓▓░░░  ░░░░░▓▓░░░░░░░░    │
+│ ░░░░░░░░░▓▓░░░░░░░░░  ░░▓▓░░        │
+└──────────────────────────────────────┘
+           ▲▲ all bars lit at same screen X
+
+t=1.6s
+┌──────────────────────────────────────┐
+│ ░░░░░░░░░░░░░░░░░░▓▓                │
+│ ░░░░░░░░░░░░░░░░░░░░░░░░░▓▓         │
+│ ░░░░░░░░░░░░░░░░░░░▓▓               │
+│ ░░░░░░░░░░░░░░░  ░░░░░░░░░░░░░▓▓   │
+│ ░░░░░░░░░░░░░░░░░░░░  ░░░░░▓▓       │
+└──────────────────────────────────────┘
+                              ▲▲ beam exits right
+```
+
+### Dual Zone (`.left` + `.right`)
+
+Both zones share the same 0→1 phase, so they always start
+and restart together — even though the left zone is wider.
+
+```
+t=0.0s
+┌─── LEFT ZONE (65%) ──────┐ ┌ RIGHT (35%) ┐
+│ ▓▓░░░░░░░░░░░░░░░░░░░░░  │ │ ▓▓░░░░░░░░  │
+│ ▓▓░░░░░░░░░░░░░░░░       │ │ ▓▓░░░░      │
+│ ▓▓░░░░░░░░░░░░            │ │ ▓▓░░░       │
+│ ▓▓░░░░░░░░░░░░░░░         │ │ ▓▓░░░░░     │
+└───────────────────────────┘ └─────────────┘
+ ▲ both start together        ▲
+
+t=0.8s
+┌─── LEFT ZONE (65%) ──────┐ ┌ RIGHT (35%) ┐
+│ ░░░░░░░░░░▓▓░░░░░░░░░░░  │ │ ░░░░▓▓░░░░  │
+│ ░░░░░░░░░░▓▓░░░░░░       │ │ ░░░░▓▓░░    │
+│ ░░░░░░░░░░▓▓░░            │ │ ░░░░▓▓░     │
+│ ░░░░░░░░░░▓▓░░░░░         │ │ ░░░░▓▓░░░   │
+└───────────────────────────┘ └─────────────┘
+            ▲▲ 50% of left       ▲▲ 50% of right
+            (slower, wider)      (faster, narrower)
+
+t=1.6s
+┌─── LEFT ZONE (65%) ──────┐ ┌ RIGHT (35%) ┐
+│ ░░░░░░░░░░░░░░░░░░░░░▓▓  │ │ ░░░░░░░░▓▓  │
+│ ░░░░░░░░░░░░░░░░░░░░▓▓   │ │ ░░░░░░░▓▓   │
+│ ░░░░░░░░░░░░░░░░░░░▓▓    │ │ ░░░░░░▓▓    │
+│ ░░░░░░░░░░░░░░░░░░░░▓▓   │ │ ░░░░░░░▓▓   │
+└───────────────────────────┘ └─────────────┘
+                         ▲▲ both finish together ▲▲
+```
 
 ## License
 
