@@ -4,6 +4,18 @@ A SwiftUI shimmer placeholder library where **all bars sweep in perfect sync** �
 
 Unlike per-element shimmer libraries that animate each view independently (causing mismatched diagonal sweeps), SyncShimmer uses a global timestamp and screen-position awareness so every placeholder lights up at the same screen X at the same instant.
 
+### Single Zone (`.full`)
+
+One beam sweeps left to right. All bars light up at the same screen X.
+
+![Single Zone Diagram](single-zone.png)
+
+### Dual Zone (`.left` + `.right`)
+
+Both zones share the same 0→1 phase. They always start and restart together, even though the left zone is wider.
+
+![Dual Zone Diagram](dual-zone.png)
+
 ## Features
 
 - **Screen-synchronized** — all placeholders sweep in unison using `TimelineView` + `GeometryReader`
@@ -147,14 +159,6 @@ bar lights up as it passes through.
 4. The beam sweeps across the zone width; each bar maps it to local coordinates
 5. A soft `LinearGradient` is positioned at the local beam position
 6. Result: one beam, many bars, perfectly in sync
-
-### Single Zone (`.full`)
-
-![Single Zone Diagram](single-zone.png)
-
-### Dual Zone (`.left` + `.right`)
-
-![Dual Zone Diagram](dual-zone.png)
 
 ## License
 
