@@ -5,26 +5,26 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, 'Inter', 'SF Pro', sans-serif; background: #fff; -webkit-font-smoothing: antialiased; }
-  .diagram { width: 880px; padding: 40px; }
-  .timestep { margin-bottom: 48px; }
-  .time-label { font-size: 20px; font-weight: 600; color: #999; margin-bottom: 12px; }
+  .diagram { width: 1760px; padding: 80px; }
+  .timestep { margin-bottom: 96px; }
+  .time-label { font-size: 40px; font-weight: 600; color: #999; margin-bottom: 24px; }
   .box {
     background: #F4F4F4; border: 1px solid #E8E8E8;
-    border-radius: 12px; padding: 24px 28px;
-    display: flex; flex-direction: column; gap: 10px;
+    border-radius: 24px; padding: 48px 56px;
+    display: flex; flex-direction: column; gap: 40px;
   }
-  .bar { height: 18px; border-radius: 6px; background: #DCDCDC; }
-  .annotation { font-size: 18px; font-weight: 600; color: #E74C3C; margin-top: 12px; white-space: nowrap; }
-  .dual-row { display: flex; gap: 20px; }
+  .bar { height: 36px; border-radius: 12px; background: #DCDCDC; }
+  .annotation { font-size: 36px; font-weight: 600; color: #E74C3C; margin-top: 24px; white-space: nowrap; }
+  .dual-row { display: flex; gap: 40px; }
   .zone-box {
     background: #F4F4F4; border: 1px solid #E8E8E8;
-    border-radius: 12px; padding: 20px;
-    display: flex; flex-direction: column; gap: 10px;
+    border-radius: 24px; padding: 40px;
+    display: flex; flex-direction: column; gap: 40px;
   }
   .zone-box.left { flex: 0.65; }
   .zone-box.right { flex: 0.35; }
-  .zone-label { font-size: 16px; font-weight: 700; color: #AAA; letter-spacing: 1.5px; margin-bottom: 4px; }
-  .zone-box .bar { height: 16px; }
+  .zone-label { font-size: 32px; font-weight: 700; color: #AAA; letter-spacing: 3px; margin-bottom: 8px; }
+  .zone-box .bar { height: 32px; }
 </style>
 </head>
 <body>
@@ -67,7 +67,7 @@
 
 <script>
 function beamGrad(beamFrac, barW, bandPx) {
-  return `radial-gradient(${bandPx}px 100px at ${(beamFrac*100).toFixed(1)}% 50%, #909090, #DCDCDC)`;
+  return `radial-gradient(${bandPx}px 200px at ${(beamFrac*100).toFixed(1)}% 50%, #909090, #DCDCDC)`;
 }
 
 function makeBars(container, widths, beamPx, bandPx) {
@@ -81,35 +81,30 @@ function makeBars(container, widths, beamPx, bandPx) {
   });
 }
 
-// Single zone config
-const sw = [744, 580, 440, 520, 480]; // 2x of original for retina
-const band = 100;
-const boxPad = 28; // box padding-left
+// Single zone config (all 2x for retina)
+const sw = [1488, 1160, 880, 1040, 960];
+const band = 200;
 
-// t=0: beam at 0px from bar start
+// t=0: beam at 0px
 makeBars(document.getElementById('s0'), sw, 0, band);
-// Arrow should point at x=0 of bars = boxPad from box left
-// boxPad(28) + diagram pad(40) = 68px from diagram left
-document.getElementById('s0a').innerHTML = '<span style="margin-left:28px;">↑ beam starts here</span>';
+document.getElementById('s0a').innerHTML = '<span style="margin-left:56px;">↑ beam starts here</span>';
 
-// t=0.8: beam at center = 372px (half of 744)
-makeBars(document.getElementById('s1'), sw, 372, band);
-// Arrow at 372px from bar start = 28+372=400px from box left
-document.getElementById('s1a').innerHTML = '<span style="margin-left:370px;">↑ all bars lit at same screen X</span>';
+// t=0.8: beam at center = 744px
+makeBars(document.getElementById('s1'), sw, 744, band);
+document.getElementById('s1a').innerHTML = '<span style="margin-left:740px;">↑ all bars lit at same screen X</span>';
 
-// t=1.6: beam at 744px (right edge of longest bar)
-makeBars(document.getElementById('s2'), sw, 744, band);
-// Arrow at right edge of longest bar. 28+744=772 from box. Arrow text should end there.
+// t=1.6: beam at 1488px (right edge)
+makeBars(document.getElementById('s2'), sw, 1488, band);
 document.getElementById('s2a').style.textAlign = 'right';
-document.getElementById('s2a').style.paddingRight = '28px';
+document.getElementById('s2a').style.paddingRight = '56px';
 document.getElementById('s2a').innerHTML = 'beam exits right ↑';
 
 // Dual zone
 function makeDual(id, leftBeam, rightBeam) {
   const row = document.getElementById(id);
-  const lw = [440, 330, 260, 360];
-  const rw = [240, 170, 130, 190];
-  const lb = 80, rb = 60;
+  const lw = [880, 660, 520, 720];
+  const rw = [480, 340, 260, 380];
+  const lb = 160, rb = 120;
 
   const leftBox = document.createElement('div');
   leftBox.className = 'zone-box left';
@@ -127,24 +122,23 @@ function makeDual(id, leftBeam, rightBeam) {
 
 // d0: beams at 0
 makeDual('d0', 0, 0);
-// Left arrow at ~20px (zone pad), right arrow at right zone start + 20px
-// Left zone width ≈ 880*0.65 - some = ~530. Right starts at ~550.
+// All 2x: Left zone ~1040px wide, right zone ~560px. Gap 40px. Right starts at ~1080px.
 document.getElementById('d0a').innerHTML =
-  '<span style="margin-left:20px;">↑ beam</span>' +
-  '<span style="margin-left:510px;">↑ beam</span>';
+  '<span style="margin-left:40px;">↑ beam</span>' +
+  '<span style="margin-left:980px;">↑ beam</span>';
 
 // d1: beams at 50%
-makeDual('d1', 220, 120);
-// Left beam at 220px from bar start. In zone that's 20+220=240px from diagram.
-// Right beam at 120px from bar start. Right zone starts at ~550, + 20 + 120 = 690
+makeDual('d1', 440, 240);
+// Left beam at 440px in zone. Right beam at 240px. Right zone starts at ~1080.
 document.getElementById('d1a').innerHTML =
-  '<span style="margin-left:240px;">↑ 50% of left</span>' +
-  '<span style="margin-left:310px;">↑ 50% of right</span>';
+  '<span style="margin-left:480px;">↑ 50% of left</span>' +
+  '<span style="margin-left:540px;">↑ 50% of right</span>';
 
 // d2: beams at end
-makeDual('d2', 440, 240);
-// Center annotation between the two zones
-document.getElementById('d2a').textContent = '↑↑ both finish together ↑↑';
+makeDual('d2', 880, 480);
+// Center of gap between zones: left ends ~1040, gap 40, center ~1060
+document.getElementById('d2a').style.textAlign = 'left';
+document.getElementById('d2a').innerHTML = '<span style="display:inline-block;padding-left:880px;">↑↑ both finish together ↑↑</span>';
 </script>
 
 </body>
