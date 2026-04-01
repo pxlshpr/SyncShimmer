@@ -95,8 +95,8 @@ public struct SyncShimmerPlaceholder: View {
 
     private var highlightColor: Color {
         SyncShimmerConfig.highlightColor ?? (colorScheme == .dark
-            ? Color(.systemGray3)
-            : Color(.systemGray4))
+            ? Color.gray.opacity(0.35)
+            : Color.gray.opacity(0.25))
     }
 
     public var body: some View {
